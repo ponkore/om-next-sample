@@ -2,7 +2,8 @@
   (:require [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
             [sablono.core :refer [html]]
-            [om-next-sample.text :as t]))
+            [om-next-sample.text :as t]
+            [taoensso.timbre :refer-macros [log trace debug info warn error fatal report]]))
 
 (enable-console-print!)
 
@@ -15,9 +16,9 @@
 
 (defmethod read :default
   [{:keys [state query] :as env} k params]
-  {:value (let [_ (.log js/console "read env keys=" (str (keys env)))]
+  {:value (let [_ (info "read env=" env)]
             (if-let [v (get @state k)]
-              (let [_ (.log js/console "db->tree result=" (str (om/db->tree query v @state)))]
+              (let [_ (info "db->tree result=" (om/db->tree query v @state))]
                 v)
               "not-found"))})
 

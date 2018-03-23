@@ -20,6 +20,7 @@
                  [org.danielsz/system "0.4.1"]
                  [org.clojure/tools.namespace "0.2.11"]
                  [org.omcljs/om "1.0.0-beta2"]
+                 [com.taoensso/timbre "4.10.0"]
                  [sablono "0.8.3"]
                  [binaryage/dirac "1.2.31"]]
 
