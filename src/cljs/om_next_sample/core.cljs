@@ -57,10 +57,10 @@
     (let [{:keys [textinput/value]} (om/props this)]
       (html
        [:input {:type "text"
+                :value (str value)
                 :on-change (fn [event]
                              (om/transact! this `[(textinput/update-text {:value ~(-> event .-target .-value)})
-                                                  :textinput/value]))}
-        value]))))
+                                                  :textinput/value]))}]))))
 
 (def my-textinput (om/factory TextInput))
 
@@ -68,6 +68,7 @@
   static om/IQuery
   (query [this]
     `[:root/text
+      {:root/textinput ~(om/get-query TextInput)}
       {:root/foo-data ~(om/get-query Foo)}])
   Object
   (render [this]
