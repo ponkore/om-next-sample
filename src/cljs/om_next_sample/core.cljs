@@ -1,7 +1,8 @@
 (ns om-next-sample.core
   (:require [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
-            [sablono.core :refer [html]]))
+            [sablono.core :refer [html]]
+            [om-next-sample.text :as t]))
 
 (enable-console-print!)
 
@@ -34,7 +35,7 @@
     ;; :merge-tree (fn [a b] (debug "|merge" a b) (merge a b))
     :parser parser}))
 
-(defui ^:once Foo
+(defui Foo
   static om/IQuery
   (query [this]
     [:foo/my-id])
@@ -47,53 +48,16 @@
 
 (def foo (om/factory Foo))
 
-(defui ^:once TextInput
-  static om/IQuery
-  (query [this]
-    [:textinput/text])
-  Object
-  (componentDidMount [this]
-    (let [{:keys [textinput/text]} (om/props this)]
-      (om/update-state! this assoc
-                        :composing? (atom false)
-                        :old-val (atom text))
-      (when-not (empty? text)
-        (let [this-node (-> (om/react-ref this "this-node-ref") dom/node)]
-          (set! (.-value this-node) text)))))
-  (componentWillUnmount [this]
-    (let [{:keys [composing? old-val]} (om/get-state this)]
-      (reset! old-val "")
-      (reset! composing? false)))
-  (render [this]
-    (let [{:keys [textinput/text]} (om/props this)
-          {:keys [composing? old-val]} (om/get-state this)]
-      (html
-       [:input {:type "text"
-                :ref "this-node-ref"
-                ;; :value (str text)
-                :on-composition-start (fn [event] (reset! composing? true))
-                :on-composition-end (fn [event]
-                                      (let [v (-> event .-target .-value)]
-                                        (reset! composing? false)
-                                        (when-not (= v @old-val)
-                                          (reset! old-val v)
-                                          (om/transact! this `[(textinput/update-text {:text ~v})
-                                                               :textinput/text]))))
-                :on-input (fn [event]
-                            (let [v (-> event .-target .-value)]
-                              (when-not @composing?
-                                (when-not (= v @old-val)
-                                  (reset! old-val v)
-                                  (om/transact! this `[(textinput/update-text {:text ~v})
-                                                       :textinput/text])))))}]))))
+(def my-textinput (om/factory t/TextInput))
 
-(def my-textinput (om/factory TextInput))
+#_(fn [this text]
+    (om/transact! this `[(textinput/update-text {:text ~text}) :textinput/text]))
 
 (defui ^:once RootComponent
   static om/IQuery
   (query [this]
     `[:root/text
-      {:root/textinput ~(om/get-query TextInput)}
+      {:root/textinput ~(om/get-query t/TextInput)}
       {:root/foo-data ~(om/get-query Foo)}])
   Object
   (render [this]
