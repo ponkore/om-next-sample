@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.908" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.946" :scope "provided"]
                  [com.cognitect/transit-clj "0.8.300"]
                  [com.cognitect/transit-cljs "0.8.243"] ;; ??
                  [ring "1.6.3"]
@@ -29,7 +29,7 @@
 
   :min-lein-version "2.6.1"
 
-  ;; :jvm-opts ["--add-modules" "java.xml.bind"]
+  :jvm-opts ["--add-modules" "java.xml.bind"]
 
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
 
