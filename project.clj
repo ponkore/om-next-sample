@@ -22,7 +22,8 @@
                  [org.omcljs/om "1.0.0-beta2"]
                  [com.taoensso/timbre "4.10.0"]
                  [sablono "0.8.3"]
-                 [binaryage/dirac "1.2.31"]]
+                 [binaryage/dirac "1.2.31"]
+                 [cljs-react-material-ui "0.2.48"]]
 
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-environ "1.1.0"]]
