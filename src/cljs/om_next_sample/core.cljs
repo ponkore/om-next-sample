@@ -7,7 +7,7 @@
 
 (defonce app-state (atom {:root/text "Hello Chestnut!"
                           :root/foo-data {:foo/my-id "sample sample"}
-                          :root/textinput {:textinput/value "init"}}))
+                          :root/textinput {:textinput/text "init"}}))
 
 (defmulti read om/dispatch)
 (defmulti mutate om/dispatch)
@@ -21,9 +21,9 @@
               "not-found"))})
 
 (defmethod mutate 'textinput/update-text
-  [{:keys [state] :as env} _ {:keys [value]}]
-  {:value {:keys [:textinput/value]}
-   :action (fn [] (swap! state assoc-in [:root/textinput :textinput/value] value))})
+  [{:keys [state] :as env} _ {:keys [text]}]
+  {:value {:keys [:textinput/text]}
+   :action (fn [] (swap! state assoc-in [:root/textinput :textinput/text] text))})
 
 (def parser (om/parser {:read read :mutate mutate}))
 
@@ -47,20 +47,45 @@
 
 (def foo (om/factory Foo))
 
-;; TODO: composing ...
 (defui ^:once TextInput
   static om/IQuery
   (query [this]
-    [:textinput/value])
+    [:textinput/text])
   Object
+  (componentDidMount [this]
+    (let [{:keys [textinput/text]} (om/props this)]
+      (om/update-state! this assoc
+                        :composing? (atom false)
+                        :old-val (atom text))
+      (when-not (empty? text)
+        (let [this-node (-> (om/react-ref this "this-node-ref") dom/node)]
+          (set! (.-value this-node) text)))))
+  (componentWillUnmount [this]
+    (let [{:keys [composing? old-val]} (om/get-state this)]
+      (reset! old-val "")
+      (reset! composing? false)))
   (render [this]
-    (let [{:keys [textinput/value]} (om/props this)]
+    (let [{:keys [textinput/text]} (om/props this)
+          {:keys [composing? old-val]} (om/get-state this)]
       (html
        [:input {:type "text"
-                :value (str value)
-                :on-change (fn [event]
-                             (om/transact! this `[(textinput/update-text {:value ~(-> event .-target .-value)})
-                                                  :textinput/value]))}]))))
+                :ref "this-node-ref"
+                ;; :value (str text)
+                :on-composition-start (fn [event] (reset! composing? true))
+                :on-composition-end (fn [event]
+                                      (let [v (-> event .-target .-value)]
+                                        (reset! composing? false)
+                                        (when-not (= v @old-val)
+                                          (reset! old-val v)
+                                          (om/transact! this `[(textinput/update-text {:text ~v})
+                                                               :textinput/text]))))
+                :on-input (fn [event]
+                            (let [v (-> event .-target .-value)]
+                              (when-not @composing?
+                                (when-not (= v @old-val)
+                                  (reset! old-val v)
+                                  (om/transact! this `[(textinput/update-text {:text ~v})
+                                                       :textinput/text])))))}]))))
 
 (def my-textinput (om/factory TextInput))
 
