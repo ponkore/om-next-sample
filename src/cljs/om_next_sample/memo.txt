@@ -1,0 +1,29 @@
+優先順位
+-----------------------------
+syntax error の件
+materialize
+page routing component
+with-validator-text
+remote
+error pane
+simple dropdown
+incremental search combobox
+radio
+check
+button
+list
+table
+card
+menu
+tab
+sidemenu
+-----------------------------
+
+client side routing commponent
+
+(page-switcher
+ {"/page1" (component)
+  "/page2" (component)
+  "/page3" (component)})
+
+:remotes ... の謎

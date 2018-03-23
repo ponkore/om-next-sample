@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.908" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.946" :scope "provided"]
                  [com.cognitect/transit-clj "0.8.300"]
                  [com.cognitect/transit-cljs "0.8.243"] ;; ??
                  [ring "1.6.3"]
@@ -20,8 +20,10 @@
                  [org.danielsz/system "0.4.1"]
                  [org.clojure/tools.namespace "0.2.11"]
                  [org.omcljs/om "1.0.0-beta2"]
+                 [com.taoensso/timbre "4.10.0"]
                  [sablono "0.8.3"]
-                 [binaryage/dirac "1.2.31"]]
+                 [binaryage/dirac "1.2.31"]
+                 [cljs-react-material-ui "0.2.48"]]
 
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-environ "1.1.0"]]
