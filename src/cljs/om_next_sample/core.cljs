@@ -16,11 +16,8 @@
 
 (defmethod read :default
   [{:keys [state query] :as env} k params]
-  {:value (let [_ (info "read env=" env)]
-            (if-let [v (get @state k)]
-              (let [_ (info "db->tree result=" (om/db->tree query v @state))]
-                v)
-              "not-found"))})
+  {:value (if-let [v (get @state k)] v "not-found")})
+;; (om/db->tree query v @state)
 
 (defmethod mutate 'textinput/update-text
   [{:keys [state] :as env} _ {:keys [text]}]
