@@ -2,6 +2,7 @@
   (:require [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
             [sablono.core :refer [html]]
+            [om-next-sample.error-pane :as e]
             [om-next-sample.text :as t]
             [cljsjs.material-ui]
             [cljs-react-material-ui.core :as ui]
@@ -10,8 +11,9 @@
 
 (enable-console-print!)
 
-(defonce app-state (atom {:root/text "Hello Chestnut!"
-                          :root/textinput {:textinput/text "**init**"}
+(defonce app-state (atom {:error-info {:error/code "EE0001" :error/message "あいうえお"}
+                          :root/text "Hello Chestnut!"
+                          :root/textinput {:text "**init**"}
                           :root/foo-data {:foo/my-id "sample sample"}}))
 
 (defmulti read om/dispatch)
@@ -25,7 +27,7 @@
 (defmethod mutate 'root/update-text
   [{:keys [state] :as env} _ {:keys [text]}]
   {:value {:keys [:root/textinput]}
-   :action (fn [] (swap! state assoc-in [:root/textinput :textinput/text] text))})
+   :action (fn [] (swap! state assoc-in [:root/textinput :text] text))})
 
 (def parser (om/parser {:read read :mutate mutate}))
 
@@ -49,25 +51,34 @@
 
 (def foo (om/factory Foo))
 
+(def error-pane (om/factory e/ErrorPane))
+
 (def my-textinput (om/factory t/TextInput))
 
 (defui ^:once RootComponent
   static om/IQuery
   (query [this]
     `[:root/text
-      {:root/textinput [:textinput/text]}
-      {:root/foo-data ~(om/get-query Foo)}])
+      {:error-info ~(om/get-query e/ErrorPane)}
+      {:root/foo-data ~(om/get-query Foo)}
+      {:root/textinput [:text]}])
   Object
   (render [this]
-    (let [{:keys [root/text root/foo-data root/textinput]} (om/props this)]
+    (let [{:keys [error-info
+                  root/text
+                  root/foo-data
+                  root/textinput]} (om/props this)]
       (ui/mui-theme-provider
        {:mui-theme (ui/get-mui-theme)}
        (html
         [:div
+         (error-pane error-info)
          [:h1 text]
          [:br]
          (foo foo-data)
          (my-textinput (assoc textinput
+                              :id "hoge"
+                              :default-value (:text textinput)
                               :on-change-fn (fn [this text] (om/transact! this `[(root/update-text {:text ~text}) :root/text]))))
          ])))))
 
