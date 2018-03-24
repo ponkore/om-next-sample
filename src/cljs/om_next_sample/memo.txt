@@ -1,7 +1,5 @@
 優先順位
 -----------------------------
-syntax error の件
-materialize
 page routing component
 with-validator-text
 remote
