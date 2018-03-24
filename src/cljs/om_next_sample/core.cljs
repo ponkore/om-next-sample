@@ -12,7 +12,7 @@
 (enable-console-print!)
 
 (defonce app-state (atom {:error-info {:error/code "EE0001" :error/message "あいうえお"}
-                          :root/text "Hello Chestnut!"
+                          :root/text {:text "Hello Chestnut!"}
                           :root/textinput {:text "**init**"}
                           :root/foo-data {:foo/my-id "sample sample"}}))
 
@@ -20,9 +20,17 @@
 (defmulti mutate om/dispatch)
 
 (defmethod read :default
-  [{:keys [state query] :as env} k params]
-  {:value (if-let [v (get @state k)] v "not-found")})
-;; (om/db->tree query v @state)
+  [{:keys [state query ast] :as env} k params]
+  (info "read" k ",q=" query ",ast=" ast)
+  (if-let [v (get @state k)]
+    {:value (om/db->tree query v @state)}
+    {:value "not-found"}))
+
+;; (defmethod read :customers/by-id [env k params]
+;;   (let [st @(:state env)]
+;;     (if-let [[_ v] (find st k)]
+;;       {:value v :remote (:ast env)}
+;;       {:value :not-found})))
 
 (defmethod mutate 'root/update-text
   [{:keys [state] :as env} _ {:keys [text]}]
@@ -30,6 +38,10 @@
    :action (fn [] (swap! state assoc-in [:root/textinput :text] text))})
 
 (def parser (om/parser {:read read :mutate mutate}))
+
+;; (defn send-fn [chan]
+;;   (fn [edn callback-fn]
+;;     ))
 
 (def reconciler
   (om/reconciler
@@ -56,9 +68,12 @@
 (def my-textinput (om/factory t/TextInput))
 
 (defui ^:once RootComponent
+  static om/IQueryParams
+  (params [this]
+    {:param1 1 :param2 "2"})
   static om/IQuery
   (query [this]
-    `[:root/text
+    `[{(:root/text {:param1 ~'?param1 :param2 ~'?param2}) [:text]}
       {:error-info ~(om/get-query e/ErrorPane)}
       {:root/foo-data ~(om/get-query Foo)}
       {:root/textinput [:text]}])
@@ -67,7 +82,8 @@
     (let [{:keys [error-info
                   root/text
                   root/foo-data
-                  root/textinput]} (om/props this)]
+                  root/textinput]} (om/props this)
+          text (:text text)]
       (ui/mui-theme-provider
        {:mui-theme (ui/get-mui-theme)}
        (html
@@ -76,7 +92,7 @@
          [:h1 text]
          [:br]
          (foo foo-data)
-         (my-textinput (assoc textinput
+         (my-textinput (assoc textinput ;; must have {:text "string"}
                               :id "hoge"
                               :default-value (:text textinput)
                               :on-change-fn (fn [this text] (om/transact! this `[(root/update-text {:text ~text}) :root/text]))))
