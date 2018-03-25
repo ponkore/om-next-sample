@@ -35,7 +35,7 @@
 (def routes ["/" {"" {:get index-handler}
                   "css" {:get (resources {:prefix "public/css/"})}
                   "js" {:get (resources {:prefix "public/js/"})}
-                  "api" {:get  {[""] api}}}])
+                  "api" {:post {[""] api}}}])
 
 (defn home-routes
   [endpoint]
