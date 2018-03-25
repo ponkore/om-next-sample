@@ -94,7 +94,7 @@
          (my-textinput (assoc textinput ;; must have {:text "string"}
                               :id "hoge"
                               :default-value (:text textinput)
-                              :on-change-fn (fn [this text] (om/transact! this `[(root/update-text {:text ~text}) :root/text]))))
+                              :on-change-fn (fn [this text] (om/transact! this `[(root/update-text {:text ~text}) :root/textinput]))))
          ])))))
 
 (defn render []
