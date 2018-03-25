@@ -21,11 +21,13 @@
    :headers {"Content-Type" "application/transit+json; charset=UTF-8"}
    :body    data})
 
+(def app-state (atom {}))
+
 (defn api
   [req]
   (let [{:keys [state]} req]
     (generate-response
-      (parser {:state state} (:remote (:transit-params req))))))
+      (parser {:state app-state} (:remote (:transit-params req))))))
 
 (defn index-handler
   [req]
