@@ -22,16 +22,16 @@
 
 (defmethod read :default
   [{:keys [state query ast] :as env} k params]
-  ;; (info "read" k ",q=" query ",ast=" ast)
+  (info "read" k ",q=" query)
   (if-let [v (get @state k)]
     {:value (om/db->tree query v @state)}
     {:value "not-found"}))
 
 (defmethod read :root/text
   [{:keys [state query ast] :as env} k params]
-  (info "**root/text read" k ",q=" query ",ast=" ast)
+  (info "**root/text read" k ", x=" (om/db->tree query (get @state k) @state))
   (if-let [v (get @state k)]
-    {:value (om/db->tree query v @state)} ;; :remote true
+    {:value (om/db->tree query v @state) :remote true}
     {:value "not-found"}))
 
 (defmethod mutate 'root/update-text
