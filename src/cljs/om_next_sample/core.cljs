@@ -4,6 +4,7 @@
             [sablono.core :refer [html]]
             [om-next-sample.error-pane :as e]
             [om-next-sample.text :as t]
+            [om-next-sample.util :as util]
             [cljsjs.material-ui]
             [cljs-react-material-ui.core :as ui]
             [cljs-react-material-ui.icons :as ic]
@@ -21,16 +22,17 @@
 
 (defmethod read :default
   [{:keys [state query ast] :as env} k params]
-  (info "read" k ",q=" query ",ast=" ast)
+  ;; (info "read" k ",q=" query ",ast=" ast)
   (if-let [v (get @state k)]
     {:value (om/db->tree query v @state)}
     {:value "not-found"}))
 
-;; (defmethod read :customers/by-id [env k params]
-;;   (let [st @(:state env)]
-;;     (if-let [[_ v] (find st k)]
-;;       {:value v :remote (:ast env)}
-;;       {:value :not-found})))
+(defmethod read :root/text
+  [{:keys [state query ast] :as env} k params]
+  (info "**root/text read" k ",q=" query ",ast=" ast)
+  (if-let [v (get @state k)]
+    {:value (om/db->tree query v @state)} ;; :remote true
+    {:value "not-found"}))
 
 (defmethod mutate 'root/update-text
   [{:keys [state] :as env} _ {:keys [text]}]
@@ -39,16 +41,13 @@
 
 (def parser (om/parser {:read read :mutate mutate}))
 
-;; (defn send-fn [chan]
-;;   (fn [edn callback-fn]
-;;     ))
-
 (def reconciler
   (om/reconciler
    {:state app-state
     :normalize true
     ;; :merge-tree (fn [a b] (debug "|merge" a b) (merge a b))
-    :parser parser}))
+    :parser parser
+    :send (util/transit-post "/api")}))
 
 (defui Foo
   static om/IQuery
