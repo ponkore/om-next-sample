@@ -12,7 +12,7 @@
 
 (enable-console-print!)
 
-(defonce app-state (atom {:error-info {:error/code "EE0001" :error/message "あいうえお"}
+(defonce app-state (atom {:error/info {:error/code "EE0001" :error/message "あいうえお"}
                           :root/text {:text "Hello Chestnut!"}
                           :root/textinput {:text "**init**"}
                           :root/foo-data {:foo/my-id "sample sample"}}))
@@ -73,12 +73,12 @@
   static om/IQuery
   (query [this]
     `[{(:root/text {:param1 ~'?param1 :param2 ~'?param2}) [:text]}
-      {:error-info ~(om/get-query e/ErrorPane)}
+      {:error/info ~(om/get-query e/ErrorPane)}
       {:root/foo-data ~(om/get-query Foo)}
       {:root/textinput [:text]}])
   Object
   (render [this]
-    (let [{:keys [error-info
+    (let [{:keys [error/info
                   root/text
                   root/foo-data
                   root/textinput]} (om/props this)
@@ -87,7 +87,7 @@
        {:mui-theme (ui/get-mui-theme)}
        (html
         [:div
-         (error-pane error-info)
+         (error-pane info)
          [:h1 text]
          [:br]
          (foo foo-data)
