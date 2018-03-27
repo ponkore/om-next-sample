@@ -58,7 +58,11 @@
                            :asset-path "js/compiled/out"
                            :output-to "resources/public/js/compiled/om_next_sample.js"
                            :output-dir "resources/public/js/compiled/out"
-                           :source-map-timestamp true}}
+                           :source-map true
+                           :source-map-timestamp true
+                           :preloads [devtools.preload]
+                           :optimizations :none
+                           :pretty-print true}}
 
                {:id "test"
                 :source-paths ["src/cljs" "test/cljs" "src/cljc" "test/cljc"]
@@ -108,6 +112,7 @@
   :profiles {:dev
              {:dependencies [[figwheel "0.5.15"]
                              [figwheel-sidecar "0.5.15"]
+                             [binaryage/devtools "0.9.4"]
                              [com.cemerick/piggieback "0.2.2"]
                              [org.clojure/tools.nrepl "0.2.13"]
                              [lein-doo "0.1.9"]
