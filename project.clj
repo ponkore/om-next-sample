@@ -14,7 +14,6 @@
                  [bk/ring-gzip "0.3.0"]
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
                  [bidi "2.1.3"]
-                 ;; [compojure "1.6.0"]
                  [environ "1.1.0"]
                  [com.stuartsierra/component "0.3.2"]
                  [org.danielsz/system "0.4.1"]
@@ -22,7 +21,6 @@
                  [org.omcljs/om "1.0.0-beta3"]
                  [com.taoensso/timbre "4.10.0"]
                  [sablono "0.8.3"]
-                 [binaryage/dirac "1.2.31"]
                  [cljs-react-material-ui "0.2.48"]]
 
   :plugins [[lein-cljsbuild "1.1.6"]
@@ -112,7 +110,8 @@
   :profiles {:dev
              {:dependencies [[figwheel "0.5.15"]
                              [figwheel-sidecar "0.5.15"]
-                             [binaryage/devtools "0.9.4"]
+                             [binaryage/devtools "0.9.10"]
+                             [binaryage/dirac "1.2.33"]
                              [com.cemerick/piggieback "0.2.2"]
                              [org.clojure/tools.nrepl "0.2.13"]
                              [lein-doo "0.1.9"]
